@@ -1,7 +1,26 @@
 aid: clicktivated
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/clicktivated.png
 name: Clicktivated
-description: Clicktivated is a company surfaced as a portfolio company of techstars and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: Clicktivated is a video technology platform that turns existing video
+  content into interactive, shoppable experiences without re-shooting or re-editing.
+  Its "Activate, Distribute, Optimize" workflow makes any video clickable the same
+  day, deploys it programmatically across DSPs, SSPs, publishers, and direct site
+  embeds, and captures first-party intent signals - item-level and place-level - to
+  improve targeting, measure lift, and drive better performance. The company serves
+  retail brands closing the gap between inspiration and purchase, and tourism brands
+  converting inspiration into itineraries. Founded as Clicktivated Video, Inc. and
+  backed by Techstars, with offices in Detroit, New York, Dubai, and Sydney.
 url: https://raw.githubusercontent.com/api-evangelist/clicktivated/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,9 +30,16 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-18'
 tags:
 - Company
+- Video
+- Interactive Video
+- Shoppable Video
+- Advertising Technology
+- First-Party Data
+- Retail
+- Tourism
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -23,3 +49,16 @@ maintainers:
 common:
 - type: Website
   url: https://clicktivated.com/
+- type: Blog
+  url: https://clicktivated.com/blog
+- type: Support
+  url: https://clicktivated.com/contact-us
+- type: TermsOfService
+  url: https://clicktivated.com/legal/terms-conditions
+- type: DomainSecurity
+  url: security/clicktivated-domain-security.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence
