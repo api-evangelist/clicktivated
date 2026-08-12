@@ -1,0 +1,115 @@
+# Clicktivated
+
+> Clicktivated is a video technology platform that turns existing video content into interactive, shoppable experiences without re-shooting or re-editing. Its "Activate, Distribute, Optimize" workflow makes any video clickable the same day, deploys it programmatically across DSPs, SSPs, publishers and direct site embeds, and captures first-party intent signals — item-level and place-level — to improve targeting, measure lift and drive performance. Founded as Clicktivated Video, Inc. and backed by Techstars, with offices in Detroit, New York, Dubai and Sydney.
+
+GENERATED, NOT PUBLISHED. Clicktivated does not serve an llms.txt. This file was
+generated on 2026-08-12 by the API Evangelist enrichment pipeline from the company's
+public site and from live probes of its hosts. Every statement below is either quoted
+from Clicktivated's own surface or was observed on the wire with the HTTP status noted.
+
+## Developer surface — what exists
+
+Clicktivated has NO public API, NO developer portal, NO SDK, NO published spec and NO
+API documentation. Its own how-it-works page positions the product as requiring no
+integration work from the customer. The commercial entry point is a contact form.
+
+- Website: https://clicktivated.com/
+- How it works: https://clicktivated.com/how-it-works
+- Retail: https://clicktivated.com/retail
+- Tourism: https://clicktivated.com/tourism
+- Blog: https://clicktivated.com/blog
+- Contact / sales: https://clicktivated.com/contact-us
+- Terms & conditions: https://clicktivated.com/legal/terms-conditions
+
+## Product hosts
+
+Clicktivated's product runs on its own second domain, clicktivatedstudio.com. This is
+first-party: clicktivated.com's homepage embeds the player from it directly, and the
+player bundle served there identifies itself as "prod-cvi-player" (Clicktivated Video,
+Inc.).
+
+- Player (public embed): https://player.clicktivatedstudio.com/watch?v=<videoHash>  [200]
+- Customer dashboard: https://dashboard.clicktivatedstudio.com/  [403, Cloudflare challenge + login]
+- API host: https://api.clicktivatedstudio.com  [most paths 403, Cloudflare challenge]
+- Asset CDN: https://cdn.clicktivatedstudio.com
+
+## Integration surface
+
+The only integration a customer performs is an iframe embed:
+
+    <iframe src="https://player.clicktivatedstudio.com/watch?v=707975ec4b"
+            frameborder="0" allowfullscreen scrolling="no"
+            width="100%" height="100%"></iframe>
+
+Query parameters observed:
+- `v` (required) — opaque 10-hex-character video hash issued by Clicktivated.
+- `type=vast` (or a `vast` parameter, or a `/vast/` path segment) — switches the player
+  into IAB VAST ad-serving mode with a progressive MP4 source and the VPAID 2.0 bridge.
+
+There is no versioned build and no package: the embed is an unpinned iframe against a
+rolling deployment, so an integrator cannot pin a player version.
+
+## Machine-readable contracts
+
+- OpenAPI / Swagger: NONE. /openapi.json, /swagger.json, /v1/openapi.json, /api-docs,
+  /docs and /redoc were probed on clicktivated.com, api.clicktivatedstudio.com and
+  player.clicktivatedstudio.com — all 403 or 404.
+- GraphQL: a live Apollo endpoint exists at https://api.clicktivatedstudio.com/graphql,
+  but it is the private backend for the Studio dashboard and player. Introspection is
+  DISABLED (HTTP 400, "GraphQL introspection is not allowed by Apollo Server"), so no
+  SDL is available and none is asserted here.
+- AsyncAPI / webhooks: NONE.
+- MCP server: NONE.
+- A2A agent card: NONE (/.well-known/agent-card.json and /.well-known/agent.json → 404
+  on all four hosts).
+- /.well-known/: every standard path returns 404 on every host, including security.txt,
+  openid-configuration, oauth-authorization-server, api-catalog and ai-plugin.json.
+
+## Standards actually implemented
+
+Read from Clicktivated's own shipped player bundle:
+- IAB VAST — VAST playback mode selection.
+- IAB VPAID 2.0 — full creative message bridge (clickThru, expandNonlinear,
+  collapseNonlinear, requestPlay/Pause/Stop/Skip/Resize, requestFullScreen,
+  requestExitFullScreen, requestChangeVolume, requestChangeAdDuration,
+  requestNavigation, getMediaState, reportTracking, log, fatalError).
+- IAB viewability states — VIEWABLE_IMPRESSION, NOT_VIEWABLE_IMPRESSION,
+  VIEW_UNDETERMINED_IMPRESSION.
+
+## Player interaction events
+
+First-party client telemetry sent to https://api.clicktivatedstudio.com/analytics as a
+sendBeacon GET. This is Clicktivated's own ingest, NOT a customer-facing webhook or
+event API; there is no subscription and no published schema.
+
+VIDEO_LOAD, FIRST_PLAY, VIDEO_COMPLETED, SHAPE_CLICK, NO_SHAPE_CLICK, BOOKMARK_CLICK,
+END_CAROUSEL_BOOKMARK_CLICK, CTA_CLICK, SHOW_BOOKMARKS_CLICK, HIDE_BOOKMARKS_CLICK,
+FULLSCREEN_CLICK, EXIT_FULLSCREEN_CLICK, ERROR.
+
+## Commercial
+
+- Pricing: NOT PUBLISHED. /pricing and /plans return 404 and the sitemap contains no
+  pricing or signup URL. Every call to action routes to the contact form.
+- Plans: 0. Self-serve signup: none. Free tier: none. Trial: none.
+- Rate limits: not documented; no X-RateLimit-*, RateLimit-* or Retry-After headers are
+  returned. Throttling appears as an undifferentiated Cloudflare 403 challenge.
+- Status page: none. clicktivated.statuspage.io and clicktivatedstudio.statuspage.io
+  return 200 only because Atlassian's wildcard redirects unclaimed subdomains to its own
+  marketing site.
+- SLA, deprecation policy, changelog: none published.
+
+## Repo artifacts (API Evangelist)
+
+- apis.yml
+- graphql/clicktivated-graphql.yml
+- components/clicktivated-components.yml
+- errors/clicktivated-problem-types.yml
+- conformance/clicktivated-conformance.yml
+- conventions/clicktivated-conventions.yml
+- authentication/clicktivated-authentication.yml
+- lifecycle/clicktivated-lifecycle.yml
+- packages/clicktivated-packages.yml
+- plans/clicktivated-plans-pricing.yml
+- rate-limits/clicktivated-rate-limits.yml
+- well-known/clicktivated-well-known.yml
+- security/clicktivated-domain-security.yml

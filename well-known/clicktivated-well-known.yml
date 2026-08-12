@@ -1,0 +1,125 @@
+generated: '2026-08-12'
+method: probed
+source: live HTTP probes of every Clicktivated-controlled host
+description: >-
+  Probe of the standard /.well-known/ discovery surface across every host Clicktivated
+  controls. Every path on every host returned 404. No document was served, so NO
+  WellKnown, SecurityTxt or AgentCard pointer is emitted in apis.yml — this file records
+  a verified absence, not a presence.
+
+hosts_probed:
+- https://clicktivated.com
+- https://api.clicktivatedstudio.com
+- https://player.clicktivatedstudio.com
+- https://dashboard.clicktivatedstudio.com
+
+hit_count: 0
+
+paths:
+- path: /.well-known/security.txt
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /.well-known/openid-configuration
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /.well-known/oauth-authorization-server
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /.well-known/oauth-protected-resource
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /.well-known/api-catalog
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /.well-known/ai-plugin.json
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /.well-known/agent-card.json
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /.well-known/agent.json
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+- path: /llms.txt
+  results:
+  - host: clicktivated.com
+    status: 404
+  - host: api.clicktivatedstudio.com
+    status: 404
+  - host: player.clicktivatedstudio.com
+    status: 404
+  - host: dashboard.clicktivatedstudio.com
+    status: 404
+  file: null
+
+notes: >-
+  On api.clicktivatedstudio.com the 404s are genuine origin responses (NestJS JSON
+  envelope, content-type application/json), not a CDN block — the /.well-known/* prefix
+  passes through Cloudflare while most other paths are answered with a managed
+  challenge. On clicktivated.com (Webflow) the 404s are the site's own 404 page.
+
+checked: '2026-08-12'

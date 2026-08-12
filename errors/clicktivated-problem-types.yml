@@ -1,0 +1,102 @@
+generated: '2026-08-12'
+method: probed
+source: live responses from https://api.clicktivatedstudio.com + first-party player bundle
+description: >-
+  Error envelopes observed on Clicktivated's own API host, plus the player-side error
+  taxonomy read from the first-party player bundle. Clicktivated publishes no error
+  reference, so nothing here is taken from documentation — every shape below was either
+  returned to a probe or is a literal string in Clicktivated's own shipped JavaScript.
+
+pointer_policy: >-
+  NO type: ErrorCatalog pointer is emitted in apis.yml. The rubric's error_semantics
+  check credits that pointer as "documented" error semantics, and Clicktivated has
+  documented nothing — this catalog is our own observation of envelopes we provoked, and
+  the GraphQL envelope it records is explicitly non-discriminating (every failure class
+  returns extensions.code "internal-error"). Wiring the pointer would credit a stable
+  error contract that does not exist.
+
+format: vendor
+rfc9457: false
+rfc9457_note: >-
+  No application/problem+json was observed on any route. REST errors use the NestJS
+  default envelope and GraphQL errors use the Apollo errors[] envelope.
+
+envelopes:
+- name: rest
+  content_type: application/json
+  shape:
+    message: string
+    error: string
+    statusCode: integer
+  observed_example: '{"message":"Cannot GET /.well-known/api-catalog","error":"Not Found","statusCode":404}'
+  observed_at: https://api.clicktivatedstudio.com/.well-known/api-catalog
+  observed_status: 404
+- name: graphql
+  content_type: application/json
+  shape:
+    errors:
+    - message: string
+      extensions:
+        code: string
+        name: string
+  observed_example: '{"errors":[{"message":"Cannot query field \"zzzNotAField\" on type \"Query\".","extensions":{"code":"internal-error","name":"GqlApiError"}}]}'
+  observed_at: https://api.clicktivatedstudio.com/graphql
+  observed_status: 400
+  note: >-
+    Every GraphQL failure observed — CSRF rejection, blocked introspection and schema
+    validation alike — was flattened to extensions.code "internal-error" and
+    extensions.name "GqlApiError" and returned with HTTP 400. The envelope carries no
+    machine-actionable discriminator, so a client cannot distinguish a caller mistake
+    from a server fault without string-matching the message.
+
+problem_types:
+- id: gql-api-error
+  surface: graphql
+  http_status: 400
+  code: internal-error
+  name: GqlApiError
+  title: GraphQL request rejected
+  observed_messages:
+  - 'This operation has been blocked as a potential Cross-Site Request Forgery (CSRF). Please
+    either specify a ''content-type'' header (with a type that is not one of
+    application/x-www-form-urlencoded, multipart/form-data, text/plain) or provide a
+    non-empty value for one of the following headers: x-apollo-operation-name,
+    apollo-require-preflight'
+  - 'GraphQL introspection is not allowed by Apollo Server, but the query contained
+    __schema or __type. To enable introspection, pass introspection: true to ApolloServer
+    in production'
+  - Cannot query field "zzzNotAField" on type "Query".
+  remediation: >-
+    Send Content-Type: application/json (or an x-apollo-operation-name header) and a
+    query valid against the unpublished schema.
+- id: not-found
+  surface: rest
+  http_status: 404
+  error: Not Found
+  title: Route not found
+  observed_messages:
+  - 'Cannot GET /.well-known/api-catalog'
+  remediation: Unrecognized REST paths on the API host are not routed.
+- id: cf-managed-challenge
+  surface: edge
+  http_status: 403
+  title: Cloudflare managed challenge
+  detail: >-
+    Most paths on api.clicktivatedstudio.com and dashboard.clicktivatedstudio.com are
+    answered by a Cloudflare interstitial (cf-mitigated: challenge, HTML body "Just a
+    moment...") rather than by the origin. This is an edge control, not an API error, but
+    a non-browser client will see it as an unexplained 403 with an HTML body.
+  remediation: Not client-remediable; requires an allowlist from Clicktivated.
+
+player_media_errors:
+  source: first-party player bundle (player.clicktivatedstudio.com/_next/static/chunks/)
+  note: >-
+    Standard HTML5 MediaError codes surfaced by the player and reported back to
+    Clicktivated's analytics endpoint as eventType ERROR.
+  codes:
+  - MEDIA_ERR_ABORTED
+  - MEDIA_ERR_NETWORK
+  - MEDIA_ERR_DECODE
+  - MEDIA_ERR_SRC_NOT_SUPPORTED
+
+checked: '2026-08-12'

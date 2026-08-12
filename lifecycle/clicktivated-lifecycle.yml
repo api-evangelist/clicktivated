@@ -1,0 +1,67 @@
+generated: '2026-08-12'
+method: probed
+source: live probes of Clicktivated hosts and status-page namespaces
+description: >-
+  Clicktivated publishes no versioning policy, no deprecation policy, no SLA, no
+  changelog and no status page. Because none of these exist, NO StatusPage and NO
+  Deprecation pointer is emitted in apis.yml — this file records verified absence.
+
+versioning:
+  scheme: none-published
+  current_version: null
+  version_in_path: false
+  version_header: null
+  note: >-
+    The GraphQL endpoint is unversioned (/graphql, no /v1 prefix) and the player embed
+    URL carries no version. GraphQL's own evolution model makes an unversioned endpoint
+    normal, but no field-level deprecation policy is published either, and the schema
+    cannot be read to check for @deprecated directives because introspection is disabled.
+
+deprecation:
+  policy_published: false
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: No deprecation or sunset policy was found on any Clicktivated surface.
+
+status_page:
+  exists: false
+  url: null
+  probes:
+  - url: https://status.clicktivated.com
+    status: NXDOMAIN
+  - url: https://status.clicktivatedstudio.com
+    status: NXDOMAIN
+  - url: https://clicktivated.statuspage.io/
+    status: 200
+    verdict: soft-200 — NOT a status page
+    note: >-
+      The Atlassian Statuspage wildcard answers every unclaimed subdomain and redirects
+      to https://www.atlassian.com/software/statuspage (title "Real-Time Incident
+      Communication with Statuspage | Atlassian"). This is the catch-all, not a
+      Clicktivated status page.
+  - url: https://clicktivatedstudio.statuspage.io/
+    status: 200
+    verdict: soft-200 — same Atlassian catch-all
+
+sla:
+  published: false
+  url: null
+  note: >-
+    The only legal document published is https://clicktivated.com/legal/terms-conditions
+    (200), which contains no API terms, uptime commitment or support-response
+    undertaking. No privacy policy page was found (/legal/privacy-policy,
+    /legal/privacy and /privacy-policy all 404).
+
+changelog:
+  published: false
+  url: null
+  note: >-
+    The blog at https://clicktivated.com/blog is marketing content, not a dated product
+    or API changelog. The one product-change announcement found —
+    https://clicktivated.com/discover, "New Enhanced Player Experience" — is undated and
+    unversioned.
+
+checked: '2026-08-12'

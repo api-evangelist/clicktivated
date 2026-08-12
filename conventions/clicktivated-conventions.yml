@@ -1,0 +1,97 @@
+generated: '2026-08-12'
+method: probed
+source: live probes of api.clicktivatedstudio.com + first-party player bundle
+description: >-
+  Cross-cutting runtime semantics for Clicktivated's surfaces. Clicktivated publishes no
+  developer documentation, so almost every convention below is recorded as
+  not-published — an honest gap, measured rather than assumed. Only the items marked with
+  an observed status were seen on the wire.
+
+auth:
+  style: none-public
+  detail: See authentication/clicktivated-authentication.yml. No public credential exists.
+
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  note: >-
+    No idempotency key mechanism is documented or observable. The GraphQL surface is
+    unreadable and the analytics ingest is a fire-and-forget sendBeacon GET with no
+    dedupe token beyond a client-generated sessionId (window.crypto.randomUUID). NO
+    Idempotency pointer is emitted in apis.yml.
+
+pagination:
+  style: not-published
+  params: []
+  response_fields: []
+  note: Not documented; the GraphQL schema is not introspectable.
+
+field_selection:
+  style: graphql
+  detail: >-
+    GraphQL's native field selection is the only shaping mechanism, but the selectable
+    fields are unknown because introspection is disabled.
+
+request_tracing:
+  request_id_header: null
+  observed_headers:
+  - 'cf-ray (Cloudflare edge trace id, e.g. a2a1b73c5add4f3a-EWR)'
+  - 'server-timing: chlray (challenge ray id)'
+  note: >-
+    No application-level request id is returned. The only correlatable identifier is
+    Cloudflare's cf-ray, which identifies an edge request, not an API operation. A
+    caller reporting a failure has nothing from the origin to quote.
+
+versioning:
+  style: unversioned
+  detail: /graphql carries no version segment; see lifecycle/clicktivated-lifecycle.yml.
+
+error_envelope:
+  rest:
+    shape: '{message, error, statusCode}'
+    framework: NestJS default
+  graphql:
+    shape: '{errors:[{message, extensions:{code, name}}]}'
+    discriminator: >-
+      extensions.code was "internal-error" and extensions.name "GqlApiError" for every
+      distinct failure class observed, so the envelope does not discriminate.
+  rfc9457: false
+  detail: See errors/clicktivated-problem-types.yml.
+
+rate_limit_signalling:
+  headers: none
+  detail: See rate-limits/clicktivated-rate-limits.yml.
+
+content_negotiation:
+  request: application/json required on GraphQL (Apollo CSRF prevention)
+  response: application/json on origin routes; text/html on Cloudflare challenges
+  note: >-
+    An unauthenticated client can receive an HTML Cloudflare interstitial with a 403 in
+    place of the JSON it asked for on most paths, with no Accept negotiation honoured.
+
+security_headers:
+  observed_on: https://api.clicktivatedstudio.com
+  headers:
+  - 'x-content-type-options: nosniff'
+  - 'x-frame-options: SAMEORIGIN'
+  - 'referrer-policy: same-origin'
+  - 'cross-origin-opener-policy: same-origin'
+  - 'cross-origin-resource-policy: same-origin'
+  - 'cross-origin-embedder-policy: require-corp'
+  - 'origin-agent-cluster: ?1'
+  - permissions-policy (broad deny list)
+  note: >-
+    These were returned on the Cloudflare challenge response, so they reflect the edge
+    posture; origin-only header posture was not separately observable.
+
+cross_links:
+  errors: errors/clicktivated-problem-types.yml
+  lifecycle: lifecycle/clicktivated-lifecycle.yml
+  authentication: authentication/clicktivated-authentication.yml
+  rate_limits: rate-limits/clicktivated-rate-limits.yml
+  graphql: graphql/clicktivated-graphql.yml
+  components: components/clicktivated-components.yml
+
+checked: '2026-08-12'

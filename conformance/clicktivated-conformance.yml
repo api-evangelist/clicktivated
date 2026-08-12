@@ -1,0 +1,109 @@
+generated: '2026-08-12'
+method: derived
+source: graphql/clicktivated-graphql.yml, errors/clicktivated-problem-types.yml, components/clicktivated-components.yml, well-known/clicktivated-well-known.yml
+description: >-
+  Cross-cutting standards assertions for Clicktivated, derived entirely from probes and
+  from Clicktivated's own shipped player bundle. Clicktivated publishes no compliance,
+  certification, or conformance claims anywhere on its public surface, so every entry
+  below is our own measurement, not a provider claim.
+
+standards:
+- id: graphql
+  name: GraphQL
+  conforms: true
+  evidence: >-
+    https://api.clicktivatedstudio.com/graphql is a live Apollo Server that validates
+    queries against a real schema (an invalid field returned 'Cannot query field
+    "zzzNotAField" on type "Query".', HTTP 400).
+  caveat: Introspection is disabled, so no SDL is publishable or verifiable.
+- id: graphql-introspection
+  name: GraphQL introspection
+  conforms: false
+  evidence: >-
+    HTTP 400 — "GraphQL introspection is not allowed by Apollo Server". The schema cannot
+    be read by any machine without credentials Clicktivated does not issue publicly.
+- id: openapi
+  name: OpenAPI
+  conforms: false
+  evidence: >-
+    /openapi.json, /swagger.json, /v1/openapi.json, /api-docs, /docs and /redoc were
+    probed on clicktivated.com, api.clicktivatedstudio.com and
+    player.clicktivatedstudio.com. Every one returned 403 (Cloudflare challenge) or 404.
+    No OpenAPI or Swagger document exists on any Clicktivated host.
+- id: asyncapi
+  name: AsyncAPI
+  conforms: false
+  evidence: No AsyncAPI document and no customer-facing event or webhook surface was found.
+- id: rfc9457
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    REST errors use the NestJS default envelope {message,error,statusCode}; GraphQL
+    errors use the Apollo errors[] envelope. No application/problem+json was observed.
+- id: oauth2
+  name: OAuth 2.0
+  conforms: false
+  evidence: >-
+    /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource
+    returned 404 on all four Clicktivated hosts. No OAuth flow is documented anywhere.
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: /.well-known/openid-configuration returned 404 on all four Clicktivated hosts.
+- id: mcp
+  name: Model Context Protocol
+  conforms: false
+  evidence: >-
+    POST /mcp with a tools/list JSON-RPC body was answered by a Cloudflare managed
+    challenge (403); no MCP endpoint was found on any host.
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and the legacy /.well-known/agent.json returned 404 on
+    all four Clicktivated hosts.
+- id: rfc9116
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: /.well-known/security.txt returned 404 on all four Clicktivated hosts.
+- id: rfc8594
+  name: RFC 8594 Sunset header
+  conforms: false
+  evidence: No deprecation or sunset policy is published; no Sunset or Deprecation header was observed.
+- id: idempotency
+  name: Idempotency keys
+  conforms: false
+  evidence: No idempotency mechanism is documented or observable on any public surface.
+- id: pagination
+  name: Documented pagination
+  conforms: false
+  evidence: No pagination contract is published; the GraphQL schema is not readable.
+- id: vast
+  name: IAB VAST
+  conforms: true
+  evidence: >-
+    The first-party player selects a VAST playback path from a "vast" query parameter, a
+    type=vast value, or a /vast/ path segment
+    (https://player.clicktivatedstudio.com/watch?v=707975ec4b&type=vast returned 200).
+- id: vpaid
+  name: IAB VPAID 2.0
+  conforms: true
+  evidence: >-
+    The player bundle implements the full VPAID 2.0 creative message vocabulary
+    (Creative:clickThru, Creative:requestPlay, Creative:expandNonlinear,
+    Creative:reportTracking, Creative:fatalError and eleven more).
+- id: iab-viewability
+  name: IAB viewability impression states
+  conforms: true
+  evidence: >-
+    The player emits VIEWABLE_IMPRESSION, NOT_VIEWABLE_IMPRESSION and
+    VIEW_UNDETERMINED_IMPRESSION.
+
+compliance_claims:
+  published: false
+  note: >-
+    No SOC 2, ISO 27001, PCI, HIPAA, GDPR-programme or other certification claim appears
+    on clicktivated.com, and no trust center exists. probe-security-programs.py returned
+    vdp=none trust=none. NO Compliance pointer is emitted in apis.yml.
+
+checked: '2026-08-12'

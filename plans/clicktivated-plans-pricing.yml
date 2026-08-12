@@ -1,0 +1,41 @@
+generated: '2026-08-12'
+method: searched
+source: https://clicktivated.com/
+description: >-
+  Clicktivated publishes no pricing. There is no pricing page, no plan tiers, no quota or
+  overage disclosure, and no self-serve signup — every call to action on the site routes
+  to a contact form.
+
+plan_count: 0
+currency: null
+billing_model: contact-sales
+self_serve: false
+free_tier: false
+trial: false
+
+evidence:
+- url: https://clicktivated.com/pricing
+  status: 404
+- url: https://clicktivated.com/plans
+  status: 404
+- url: https://clicktivated.com/sitemap.xml
+  status: 200
+  note: >-
+    The published sitemap enumerates the whole site — home, how-it-works, retail,
+    tourism, contact-us, blog, discover, legal/terms-conditions and 15 blog posts. No
+    pricing, plans, or signup URL exists.
+- url: https://clicktivated.com/discover
+  status: 200
+  note: >-
+    The only calls to action are "Get in touch" and "Activate Today", both linking to the
+    contact form.
+- url: https://clicktivated.com/contact-us
+  status: 200
+  note: The commercial entry point is a contact form.
+
+notes: >-
+  Clicktivated's own positioning is a managed service rather than a metered product —
+  its how-it-works page frames activation as "share your video" with no integration
+  work — which is consistent with the absence of any published rate card.
+
+checked: '2026-08-12'

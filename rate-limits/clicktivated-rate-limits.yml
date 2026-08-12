@@ -1,0 +1,47 @@
+generated: '2026-08-12'
+method: probed
+source: live responses from api.clicktivatedstudio.com and player.clicktivatedstudio.com
+description: >-
+  Clicktivated documents no rate limits and returns no rate-limit signalling headers on
+  any anonymously reachable response. What throttling exists is enforced at the Cloudflare
+  edge as a managed challenge rather than as a 429 with a machine-readable budget, so a
+  client has no runtime signal to back off against.
+
+limit_count: 0
+limits: []
+
+response_headers:
+  ratelimit_headers_observed: false
+  headers_checked:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - RateLimit
+  - RateLimit-Policy
+  - Retry-After
+  exhaustion_status_code: null
+  note: >-
+    None of these headers appeared on any observed response. The only throttling
+    behaviour seen is a Cloudflare managed challenge — HTTP 403 with cf-mitigated:
+    challenge and an HTML body — which carries no limit, no remaining count, no reset,
+    and no Retry-After. A non-browser client cannot distinguish it from an
+    authorization failure.
+
+evidence:
+- url: https://api.clicktivatedstudio.com/.well-known/api-catalog
+  status: 404
+  note: Origin response; no rate-limit headers present.
+- url: https://api.clicktivatedstudio.com/graphql
+  status: 400
+  note: Origin GraphQL response; no rate-limit headers present.
+- url: https://api.clicktivatedstudio.com/analytics
+  status: 403
+  note: 'Cloudflare managed challenge (cf-mitigated: challenge); no 429 and no Retry-After.'
+- url: https://player.clicktivatedstudio.com/watch?v=707975ec4b
+  status: 200
+  note: No rate-limit headers present.
+
+docs: null
+docs_note: Clicktivated publishes no developer documentation of any kind.
+
+checked: '2026-08-12'

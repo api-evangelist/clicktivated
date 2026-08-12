@@ -1,0 +1,113 @@
+generated: '2026-08-12'
+method: probed
+source: https://api.clicktivatedstudio.com/graphql
+name: Clicktivated Studio GraphQL API
+description: >-
+  A live Apollo GraphQL endpoint discovered on Clicktivated's own product host while
+  probing for a machine-readable contract. It is the private backend for the
+  Clicktivated Studio dashboard and the Clicktivated player; it is NOT a published
+  developer API. No SDL, no reference documentation, and no developer portal exist for
+  it anywhere on Clicktivated's public surface.
+
+ownership:
+  host: api.clicktivatedstudio.com
+  belongs_to_provider: true
+  justification: >-
+    clicktivatedstudio.com is Clicktivated's own product domain, not a third party:
+    clicktivated.com's own homepage HTML embeds the player directly from
+    https://player.clicktivatedstudio.com/watch?v=... (and a staging twin at
+    stage-player.clicktivatedstudio.com), and the first-party player bundle served from
+    that host hard-codes apiUrl "https://api.clicktivatedstudio.com" with the Datadog
+    service name "prod-cvi-player" (CVI = Clicktivated Video, Inc.).
+  evidence:
+  - url: https://clicktivated.com/
+    status: 200
+    note: 'homepage markup contains: <iframe src="https://player.clicktivatedstudio.com/watch?v=707975ec4b">'
+  - url: https://player.clicktivatedstudio.com/_next/static/chunks/57-cd2e9bdc828b5250.js
+    status: 200
+    note: 'bundle config: apiUrl:"https://api.clicktivatedstudio.com", ddService:"prod-cvi-player"'
+
+endpoint:
+  url: https://api.clicktivatedstudio.com/graphql
+  transport: https
+  server: Apollo Server
+  origin_framework: NestJS
+  origin_framework_evidence: >-
+    Unmatched REST routes return the NestJS default error envelope, e.g.
+    {"message":"Cannot GET /.well-known/api-catalog","error":"Not Found","statusCode":404}
+  root_query_type: Query
+  root_query_type_evidence: >-
+    A deliberately invalid field returned {"errors":[{"message":"Cannot query field
+    \"zzzNotAField\" on type \"Query\".", ...}]}, which confirms a real schema is being
+    validated and names the root query type.
+
+schema:
+  sdl_captured: false
+  introspection: disabled
+  introspection_response: >-
+    HTTP 400 — "GraphQL introspection is not allowed by Apollo Server, but the query
+    contained __schema or __type. To enable introspection, pass introspection: true to
+    ApolloServer in production"
+  note: >-
+    NO SDL is recorded and none was inferred. The schema is only obtainable through
+    authenticated introspection or from a schema Clicktivated has not published.
+    Nothing about field or type names beyond the root "Query" is asserted here.
+
+protections:
+- name: CSRF prevention
+  detail: >-
+    Apollo Server CSRF prevention is enabled. A request without a non-simple
+    content-type (or without x-apollo-operation-name / apollo-require-preflight) is
+    rejected with "This operation has been blocked as a potential Cross-Site Request
+    Forgery (CSRF)".
+  evidence_status: 400
+- name: Cloudflare managed challenge
+  detail: >-
+    Most non-/graphql, non-/.well-known paths on api.clicktivatedstudio.com are answered
+    by a Cloudflare managed challenge (HTTP 403, cf-mitigated: challenge, "Just a
+    moment..."), not by the origin. The /graphql and /.well-known/* routes pass through
+    to the origin.
+  evidence_status: 403
+
+related_hosts:
+- host: player.clicktivatedstudio.com
+  role: public interactive video player (Next.js); embedded by iframe
+  status: 200
+- host: stage-player.clicktivatedstudio.com
+  role: staging player, referenced from a data-src on clicktivated.com
+- host: dashboard.clicktivatedstudio.com
+  role: customer dashboard; behind a Cloudflare managed challenge and a login
+  status: 403
+- host: cdn.clicktivatedstudio.com
+  role: media/asset CDN for bookmark imagery
+
+probes:
+- url: https://api.clicktivatedstudio.com/graphql
+  method: GET
+  status: 400
+  result: CSRF-prevention error (origin reached)
+- url: https://api.clicktivatedstudio.com/graphql
+  method: POST
+  body: '{"query":"{__schema{queryType{name}}}"}'
+  status: 400
+  result: introspection disabled
+- url: https://api.clicktivatedstudio.com/openapi.json
+  status: 403
+  result: Cloudflare managed challenge, no spec
+- url: https://api.clicktivatedstudio.com/swagger.json
+  status: 403
+  result: Cloudflare managed challenge, no spec
+- url: https://api.clicktivatedstudio.com/api-docs
+  status: 403
+  result: Cloudflare managed challenge, no spec
+- url: https://api.clicktivatedstudio.com/mcp
+  status: 403
+  result: no MCP endpoint reached; Cloudflare managed challenge
+- url: https://player.clicktivatedstudio.com/openapi.json
+  status: 404
+- url: https://clicktivated.com/openapi.json
+  status: 404
+- url: https://clicktivated.com/api
+  status: 404
+
+checked: '2026-08-12'

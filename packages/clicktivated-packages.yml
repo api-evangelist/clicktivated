@@ -1,0 +1,62 @@
+generated: '2026-08-12'
+method: searched
+source: registry.npmjs.org, pypi.org, rubygems.org, crates.io, packagist.org, api.github.com
+description: >-
+  Registry sweep for a first-party Clicktivated client library. Nothing exists. The
+  product is distributed as a hosted iframe embed (see
+  components/clicktivated-components.yml), not as a package, so there is no SDK to
+  version and no release cadence to read. NO SDKs pointer is emitted in apis.yml.
+
+package_count: 0
+official_package_count: 0
+packages: []
+
+registries_searched:
+- registry: npm
+  query: clicktivated
+  endpoint: https://registry.npmjs.org/-/v1/search?text=clicktivated
+  status: 200
+  total_matches: 0
+- registry: npm
+  query: clicktivated-video
+  endpoint: https://registry.npmjs.org/-/v1/search?text=clicktivated-video
+  status: 200
+  total_matches: 0
+  note: The search returned unrelated generic video packages only; no Clicktivated-published package.
+- registry: pypi
+  query: clicktivated
+  endpoint: https://pypi.org/pypi/clicktivated/json
+  status: 404
+- registry: rubygems
+  query: clicktivated
+  endpoint: https://rubygems.org/api/v1/gems/clicktivated.json
+  status: 404
+- registry: crates.io
+  query: clicktivated
+  endpoint: https://crates.io/api/v1/crates?q=clicktivated
+  status: 200
+  total_matches: 0
+- registry: packagist
+  query: clicktivated
+  endpoint: https://packagist.org/search.json?q=clicktivated
+  status: 200
+  total_matches: 0
+
+source_code:
+  github_org: null
+  github_org_probe:
+    url: https://api.github.com/orgs/clicktivated
+    status: 403
+    note: >-
+      Unauthenticated org lookup was rate-limited; the repository search below is the
+      substantive check.
+  github_repo_search:
+    url: https://api.github.com/search/repositories?q=clicktivated
+    status: 200
+    total_matches: 2
+    results:
+    - ConorHagan/clicktivated — an unrelated personal repository, not a Clicktivated org repo
+    - api-evangelist/clicktivated — this profile repo
+  conclusion: Clicktivated publishes no source code and operates no public GitHub organization.
+
+checked: '2026-08-12'

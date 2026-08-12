@@ -1,0 +1,148 @@
+generated: '2026-08-12'
+method: probed
+source: https://player.clicktivatedstudio.com/watch + clicktivated.com homepage embed markup
+description: >-
+  Clicktivated's only consumer-facing technical surface is an embeddable interactive
+  video player, distributed as an iframe rather than as a package. There is no SDK, no
+  loader library, and no published embed documentation — the integration contract below
+  was read from Clicktivated's own site markup and from the first-party player bundle it
+  loads.
+
+component_count: 1
+
+families:
+- name: Interactive Video Player
+  kind: hosted-embed
+  description: >-
+    A hosted, whitelabelled Next.js player that overlays clickable "bookmarks" (item and
+    place hotspots) on an existing video. Distributed as an iframe; the host page needs
+    no script, no key, and no backend integration.
+  components:
+  - name: Clicktivated Player (watch)
+    type: iframe
+    embed_url: https://player.clicktivatedstudio.com/watch
+    parameters:
+    - name: v
+      required: true
+      in: query
+      description: >-
+        Opaque 10-hex-character video hash identifying the activated video, e.g.
+        707975ec4b. Issued by Clicktivated; no public endpoint mints or lists them.
+    - name: type
+      required: false
+      in: query
+      values:
+      - vast
+      description: >-
+        Switches the player into VAST ad-serving mode, which plays a progressive MP4
+        source instead of HLS and enables the VPAID creative bridge.
+    - name: vast
+      required: false
+      in: query
+      description: >-
+        Presence of this parameter alone also selects VAST mode; equivalently a URL path
+        containing /vast/.
+    observed_markup: '<iframe src="https://player.clicktivatedstudio.com/watch?v=707975ec4b" loading="lazy" frameborder="0" allowfullscreen scrolling="no" width="100%" height="100%">'
+    observed_on: https://clicktivated.com/
+    probes:
+    - url: https://player.clicktivatedstudio.com/watch?v=707975ec4b
+      status: 200
+    - url: https://player.clicktivatedstudio.com/watch?v=707975ec4b&type=vast
+      status: 200
+    - url: https://player.clicktivatedstudio.com/embed
+      status: 404
+    - url: https://player.clicktivatedstudio.com/vast/
+      status: 404
+
+distribution:
+  registry: none
+  packaged: false
+  version: null
+  version_note: >-
+    The embed is an unpinned iframe against a rolling Next.js deployment. There is no
+    package, no CDN-pinned build, and no version identifier a consumer can reference —
+    an integrator cannot tell which player version their page is serving, and neither
+    can we.
+  staging_host: stage-player.clicktivatedstudio.com
+  staging_note: >-
+    A staging twin is referenced from a data-src attribute in clicktivated.com's own
+    markup. It is Clicktivated's internal staging environment, not a published customer
+    sandbox.
+
+runtime_dependencies:
+  note: Third-party services the shipped player loads, read from the first-party bundle.
+  services:
+  - name: Mux
+    role: HLS video delivery (stream.mux.com) and Mux Data playback analytics
+  - name: hls.js
+    role: HLS playback where native HLS is unavailable
+  - name: Datadog RUM
+    role: browser real-user monitoring, service name prod-cvi-player
+  - name: Cloudflare Stream
+    role: marketing-site video on clicktivated.com (embed.cloudflarestream.com)
+
+standards:
+- id: vast
+  name: IAB VAST
+  supported: true
+  evidence: >-
+    The player detects a "vast" query parameter, a type=vast value, or a /vast/ path
+    segment and switches to a VAST playback path.
+- id: vpaid
+  name: IAB VPAID 2.0
+  supported: true
+  evidence: >-
+    The bundle implements the VPAID creative message bridge with the canonical event
+    names Creative:clickThru, Creative:expandNonlinear, Creative:collapseNonlinear,
+    Creative:requestPlay, Creative:requestPause, Creative:requestStop,
+    Creative:requestSkip, Creative:requestResize, Creative:requestFullScreen,
+    Creative:requestExitFullScreen, Creative:requestChangeVolume,
+    Creative:requestChangeAdDuration, Creative:requestNavigation,
+    Creative:getMediaState, Creative:reportTracking, Creative:log, Creative:fatalError.
+- id: viewability
+  name: Viewability impression classification
+  supported: true
+  evidence: >-
+    The player classifies impressions as VIEWABLE_IMPRESSION, NOT_VIEWABLE_IMPRESSION or
+    VIEW_UNDETERMINED_IMPRESSION, matching the IAB/OM viewability vocabulary.
+
+player_telemetry:
+  note: >-
+    The player reports interaction events to Clicktivated's own analytics ingest. This is
+    first-party client telemetry, NOT a customer-facing webhook or event API — there is
+    no subscription, no delivery to a customer endpoint, and no published schema. It is
+    recorded here because it is the only enumerable event vocabulary Clicktivated ships.
+  ingest:
+    url: https://api.clicktivatedstudio.com/analytics
+    method: GET
+    transport: navigator.sendBeacon, falling back to fetch with keepalive
+    encoding: flat URLSearchParams query string
+    probe_status: 403
+    probe_note: An anonymous probe of the ingest path is answered by a Cloudflare managed challenge.
+  parameters_observed:
+  - eventType
+  - videoId
+  - videoTime
+  - sessionId
+  - playerReferrer
+  - inViewport
+  - language
+  - vast
+  - clickedBookmarkId
+  - clickedCTABookmarkId
+  event_types:
+  - VIDEO_LOAD
+  - FIRST_PLAY
+  - VIDEO_COMPLETED
+  - SHAPE_CLICK
+  - NO_SHAPE_CLICK
+  - BOOKMARK_CLICK
+  - END_CAROUSEL_BOOKMARK_CLICK
+  - CTA_CLICK
+  - SHOW_BOOKMARKS_CLICK
+  - HIDE_BOOKMARKS_CLICK
+  - FULLSCREEN_CLICK
+  - EXIT_FULLSCREEN_CLICK
+  - ERROR
+
+checked: '2026-08-12'
